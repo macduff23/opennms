@@ -46,6 +46,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriInfo;
+import javax.xml.bind.ValidationException;
 
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
@@ -277,8 +278,13 @@ public class EventRestService extends OnmsRestService {
         if (event.getTime() == null) {
             event.setTime(new Date());
         }
-        m_eventForwarder.sendNow(event);
-        return Response.noContent().build();
+        try {
+            event.validate();
+            m_eventForwarder.sendNow(event);
+            return Response.noContent().build();
+        } catch (final ValidationException e) {
+            throw getException(Status.BAD_REQUEST, e.getMessage());
+        }
     }
 
     private static CriteriaBuilder getCriteriaBuilder(final MultivaluedMap<String, String> params) {

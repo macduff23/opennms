@@ -41,6 +41,7 @@ package org.opennms.netmgt.xml.event;
 
 import java.io.Serializable;
 
+import javax.xml.bind.ValidationException;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -328,4 +329,13 @@ public class Maskelement implements Serializable {
     		.append("mevalue", _mevalueList)
     		.toString();
     }
+
+        public void validate() throws ValidationException {
+            if (this._mename == null || this._mename.trim().isEmpty()) {
+                throw new ValidationException("Event maskelement must contain an 'mename' element!");
+            }
+            if (this._mevalueList == null || this._mevalueList.isEmpty()) {
+                throw new ValidationException("Event maskelement must contain at least one 'mevalue' element!");
+            }
+        }
 }

@@ -41,6 +41,7 @@ package org.opennms.netmgt.xml.event;
 
 import java.io.Serializable;
 
+import javax.xml.bind.ValidationException;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -153,4 +154,14 @@ public class Parm implements Serializable {
 	public boolean isValid() {
 		return getParmName() != null && getValue() != null;
 	}
+
+
+    public void validate() throws ValidationException {
+        if (this._parmName == null || this._parmName.trim().isEmpty()) {
+            throw new ValidationException("Event parm 'parmName' is a required element!");
+        }
+        if (this._value == null) {
+            throw new ValidationException("Event parm 'value' is a required element!");
+        }
+    }
 }

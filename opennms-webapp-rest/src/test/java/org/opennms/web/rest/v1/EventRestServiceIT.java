@@ -31,6 +31,7 @@ package org.opennms.web.rest.v1;
 import static org.junit.Assert.assertTrue;
 
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response.Status;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -43,6 +44,8 @@ import org.opennms.netmgt.dao.DatabasePopulator;
 import org.opennms.netmgt.dao.mock.EventAnticipator;
 import org.opennms.netmgt.dao.mock.MockEventIpcManager;
 import org.opennms.netmgt.xml.event.Event;
+import org.opennms.netmgt.xml.event.Mask;
+import org.opennms.netmgt.xml.event.Parm;
 import org.opennms.test.JUnitConfigurationEnvironment;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -108,5 +111,25 @@ public class EventRestServiceIT extends AbstractSpringJerseyRestTestCase {
         // Verify
         m_eventMgr.finishProcessingEvents();
         anticipator.verifyAnticipated(1000, 0, 0, 0, 0);
+    }
+
+    @Test
+    public void testPostEmptyEvent() throws Exception {
+        Event e = new Event();
+        sendData(POST, MediaType.APPLICATION_XML, "/events", JaxbUtils.marshal(e), Status.BAD_REQUEST.getStatusCode());
+    }
+
+    @Test
+    public void testPostBadMaskEvent() throws Exception {
+        Event e = new Event();
+        e.setMask(new Mask());
+        sendData(POST, MediaType.APPLICATION_XML, "/events", JaxbUtils.marshal(e), Status.BAD_REQUEST.getStatusCode());
+    }
+
+    @Test
+    public void testPostBadParmEvent() throws Exception {
+        Event e = new Event();
+        e.addParm(new Parm());
+        sendData(POST, MediaType.APPLICATION_XML, "/events", JaxbUtils.marshal(e), Status.BAD_REQUEST.getStatusCode());
     }
 }

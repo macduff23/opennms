@@ -41,6 +41,7 @@ package org.opennms.netmgt.xml.event;
 
 import java.io.Serializable;
 
+import javax.xml.bind.ValidationException;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -338,4 +339,13 @@ public class Snmp implements Serializable {
     		.append("time-stamp", _timeStamp)
     		.toString();
     }
+
+        public void validate() throws ValidationException {
+            if (this._id == null || this._id.trim().isEmpty()) {
+                throw new ValidationException("Event SNMP entry must contain an 'id' element!");
+            }
+            if (this._version == null || this._version.trim().isEmpty()) {
+                throw new ValidationException("Event SNMP entry must contain a 'version' element!");
+            }
+        }
 }

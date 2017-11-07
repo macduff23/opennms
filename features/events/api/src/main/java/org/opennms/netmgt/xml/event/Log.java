@@ -41,6 +41,7 @@ package org.opennms.netmgt.xml.event;
 
 import java.io.Serializable;
 
+import javax.xml.bind.ValidationException;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -149,6 +150,12 @@ public class Log implements Serializable {
 
     public void clear() {
         this._events = new Events();
+    }
+
+    public void validate() throws ValidationException {
+        if (this._events == null || this._events.getEventCount() == 0) {
+            throw new ValidationException("Event Log must contain at least one event!");
+        }
     }
 
     @Override

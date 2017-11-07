@@ -45,6 +45,7 @@ import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.xml.bind.ValidationException;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -1870,5 +1871,27 @@ public class Event implements Serializable {
 			.append("alarm-data", _alarmData)
 			.toString();
 	}
+
+    public void validate() throws ValidationException {
+        if (this._uei == null || this._uei.trim().isEmpty()) {
+            if (this._mask == null || this._mask.getMaskelementCount() == 0) {
+                throw new ValidationException("Event must contain either a UEI or an event mask!");
+            }
+        }
+        if (this._mask != null) {
+            this._mask.validate();
+        }
+        if (this._snmp != null) {
+            this._snmp.validate();
+        }
+        if (this._parms != null) {
+            if (this._parms.isEmpty()) {
+                throw new ValidationException("Event 'parms' must contain at least one 'parm' element!");
+            }
+            for (final Parm parm : this._parms) {
+                parm.validate();
+            }
+        }
+    }
 
 }
